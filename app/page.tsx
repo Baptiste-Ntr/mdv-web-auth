@@ -1,9 +1,11 @@
 
+import { Form } from '@/components/form';
 
 export default function Home() {
+
   return (
-      <div>
-        <p>Oui</p>
-      </div>
+    <div className="container">
+      <Form />
+    </div>
   )
 }
