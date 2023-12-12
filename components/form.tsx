@@ -32,7 +32,7 @@ export const Form = ({ typeForm }: FormProps) => {
                 });
 
             })} className='container-form'>
-                <input type="email" {...register('email', { required: true })} placeholder='Email' />
+                <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
                 <input type="password" {...register('password', { required: true, minLength: 8 })} placeholder='Password' />
                 <input type="submit" />
                 <Link href='/register'> Register </Link>
@@ -47,7 +47,7 @@ export const Form = ({ typeForm }: FormProps) => {
                         console.log(err);
                     });
                 })}>
-                    <input type="email" {...register('email', { required: true })} placeholder='Email' />
+                    <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
                     <input type="password" {...register('password', { required: true, minLength: 8 })} placeholder='Password' />
                     <input type="password" {...register('passwordConfirmation', { required: true, minLength: 8 })} placeholder='Confirm Password' />
                     <input type="submit" />
