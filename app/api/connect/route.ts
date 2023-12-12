@@ -12,7 +12,7 @@ export const GET = async (req: NextApiRequest) => {
     if (req.method === 'GET') {
         try {
             await client.connect();
-            console.log('Connected to MongoDB');
+            // console.log('Connected to MongoDB');
 
             const database = client.db(db)
             const users = database.collection(collection)

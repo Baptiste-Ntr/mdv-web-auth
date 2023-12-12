@@ -1,6 +1,7 @@
 import axios from "axios";
 import { MongoClient } from "mongodb";
 import { NextApiRequest } from "next";
+import bcrypt from "bcryptjs";
 
 export const POST = async (req: NextApiRequest) => {
 
@@ -13,44 +14,65 @@ export const POST = async (req: NextApiRequest) => {
     if (req.method === 'POST') {
 
         //@ts-ignore //disable json() ts error
-        const { email, password, passwordConfirmation } = await req.json()
+        let { email, password, passwordConfirmation } = await req.json()
 
         try {
             await client.connect()
             const database = client.db(db)
             const users = database.collection(collection)
 
-            const user = await users.insertOne({ email, password })
+            const existUser = await users.findOne({ email })
 
-            if (password.length < 8) {
-                return new Response('Password too short, 8 characters minimum', {
+
+            if (existUser) {
+                return new Response('User already exist', {
                     status: 400,
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 })
-            } else if (password !== passwordConfirmation) {
-                return new Response('Password and confirmation are not the same', {
-                    status: 400,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-            } else if (password.length >= 8 && password === passwordConfirmation) {
-                if (user) {
-                    return new Response('User created', {
-                        status: 200,
+            } else {
+
+                if (password.length < 8) {
+                    return new Response('Password too short, 8 characters minimum', {
+                        status: 400,
                         headers: {
                             'Content-Type': 'application/json',
                         },
                     })
-                } else {
-                    return new Response('User not created', {
-                        status: 404,
+                } else if (password !== passwordConfirmation) {
+                    return new Response('Password and confirmation are not the same', {
+                        status: 400,
                         headers: {
                             'Content-Type': 'application/json',
                         },
                     })
+                } else if (password.length >= 8 && password === passwordConfirmation) {
+
+                    let salt = await bcrypt.genSalt(10)
+                    let hash = await bcrypt.hash(password, salt);
+                    let hashConfirm = await bcrypt.hash(passwordConfirmation, salt);
+
+                    password = hash
+                    passwordConfirmation = hashConfirm
+
+                    const user = await users.insertOne({ email, password })
+
+                    if (user) {
+                        return new Response('User created', {
+                            status: 200,
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                    } else {
+                        return new Response('User not created', {
+                            status: 400,
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                    }
                 }
             }
 

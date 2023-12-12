@@ -14,10 +14,6 @@ export const POST = async (req: NextApiRequest) => {
 
     if (req.method === 'POST') {
 
-        // axios.get('/connect').then(res => {
-        //     console.log(res.status)
-        // })
-
         //@ts-ignore //disable json() ts error
         const { email, password } = await req.json();
 
@@ -29,22 +25,31 @@ export const POST = async (req: NextApiRequest) => {
             const database = client.db(db)
             const users = database.collection(collection)
 
-            // const user = await users.findOne({ "email": "test", "password": "test" })
-            // const user = await users.findOne({ email, password })
+            const user = await users.findOne({ email })
 
-            let salt = await bcrypt.genSalt(10)
-            let hash = bcrypt.hashSync(password, salt);
+            if (user) {
 
-            let compare = await bcrypt.compare(password, hash)
+                const compare = await bcrypt.compare(password, user.password)
 
-            if (compare) {
-                return new Response('Find User', {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
+                if (compare) {
+                    console.log("User found")
+                    return new Response('Find User', {
+                        status: 200,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                } else {
+                    console.error('Wrong password')
+                    return new Response('Wrong password', {
+                        status: 401,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                }
             } else {
+                console.log("User not found")
                 return new Response('User not found', {
                     status: 404,
                     headers: {
