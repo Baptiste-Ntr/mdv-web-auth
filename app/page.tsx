@@ -5,7 +5,7 @@ export default function Home() {
 
   return (
     <div className="container">
-      <Form />
+      <Form typeForm='login' />
     </div>
   )
 }

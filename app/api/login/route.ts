@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { MongoClient } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -10,6 +11,10 @@ export const POST = async (req: NextApiRequest) => {
     const collection = "User"
 
     if (req.method === 'POST') {
+
+        // axios.get('/connect').then(res => {
+        //     console.log(res.status)
+        // })
 
         //@ts-ignore //disable json() ts error
         const { email, password } = await req.json();
