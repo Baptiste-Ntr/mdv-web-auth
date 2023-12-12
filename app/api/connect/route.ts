@@ -14,17 +14,24 @@ export const GET = async (req: NextApiRequest) => {
             await client.connect();
             console.log('Connected to MongoDB');
 
-            const database = client.db(); // Replace with your database name
+            const database = client.db(db)
+            const users = database.collection(collection)
 
-            // res.status(200).json({ message: "Connected to MongoDB", database })
-
-            return new Response('Connected to MongoDB', {
-                status: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-
-            })
+            if (users) {
+                return new Response('Connected to MongoDB and Database', {
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+            } else {
+                return new Response('Failed to connect to Database', {
+                    status: 500,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+            }
         } catch (error) {
             console.error('Failed to connect to MongoDB', error);
             // res.status(500).json({ message: "Failed to connect to MongoDB" })

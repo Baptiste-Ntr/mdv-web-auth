@@ -1,7 +1,7 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export const Login = async (req: NextApiRequest, res: NextApiResponse) => {
+export const POST = async (req: NextApiRequest) => {
 
     const uri = process.env.MONGO_DB_URI || ""
     const client = new MongoClient(uri)
@@ -9,26 +9,47 @@ export const Login = async (req: NextApiRequest, res: NextApiResponse) => {
     const db = "Authentification"
     const collection = "User"
 
-    if (req.method === 'GET') {
-        const { email, password } = req.body;
+    if (req.method === 'POST') {
+
+        //@ts-ignore //disable json() ts error
+        const { email, password } = await req.json();
+
+        console.log(email, password)
+
 
         try {
             await client.connect()
             const database = client.db(db)
             const users = database.collection(collection)
 
+            // const user = await users.findOne({ "email": "test", "password": "test" })
             const user = await users.findOne({ email, password })
 
             if (user) {
-                res.status(200).json({ message: "User found" })
+                return new Response('Find User', {
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
             } else {
-                res.status(401).json({ message: "User not found" })
+                return new Response('User not found', {
+                    status: 404,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
             }
         } finally {
             await client.close();
         }
     } else {
-        res.status(405).json({ message: "We only support GET" })
+        return new Response('We only support POST', {
+            status: 405,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
     }
 
 }
