@@ -3,13 +3,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export const Login = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    const uri = 'mongodb+srv://admin:root@authentification.mnzc47o.mongodb.net/?retryWrites=true&w=majority'; // Replace with your MongoDB connection string
-    const client = new MongoClient(uri);
+    const uri = process.env.MONGO_DB_URI || ""
+    const client = new MongoClient(uri)
 
     const db = "Authentification"
     const collection = "User"
 
-    if (req.method === 'POST') {
+    if (req.method === 'GET') {
         const { email, password } = req.body;
 
         try {
@@ -28,7 +28,7 @@ export const Login = async (req: NextApiRequest, res: NextApiResponse) => {
             await client.close();
         }
     } else {
-        res.status(405).json({ message: "We only support POST" })
+        res.status(405).json({ message: "We only support GET" })
     }
 
 }
