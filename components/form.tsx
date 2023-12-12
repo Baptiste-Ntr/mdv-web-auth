@@ -8,6 +8,10 @@ import axios from 'axios';
 import { RedirectType, redirect, usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+import bcrypt from 'bcryptjs';
+
+
+
 type FormProps = {
     typeForm: string
 }
@@ -23,14 +27,19 @@ export const Form = ({ typeForm }: FormProps) => {
     return (
         typeForm === "login" ?
             <form onSubmit={handleSubmit((data) => {
-                console.log(data)
-                axios.post('/api/login', data).then((res) => {
-                    console.log('Res : ', res);
-                    router.push(`/user-connected`);
-                }).catch((err) => {
-                    console.log(err);
-                });
+                console.log(data['password'])
 
+
+                // axios.get('/api/connect').then(res => {
+                //     axios.post('/api/login', data).then((res) => {
+                //         console.log('Res : ', res);
+                //         router.push(`/user-connected`);
+                //     }).catch((err) => {
+                //         console.log(err);
+                //     });
+                // }).catch((err: any) => {
+                //     console.error(err)
+                // })
             })} className='container-form'>
                 <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
                 <input type="password" {...register('password', { required: true, minLength: 8 })} placeholder='Password' />
@@ -40,12 +49,17 @@ export const Form = ({ typeForm }: FormProps) => {
             : typeForm === "register" ?
                 <form onSubmit={handleSubmit((data) => {
                     console.log(data)
-                    axios.post('/api/register', data).then((res) => {
-                        console.log('Res : ', res);
-                        router.push(`/user-connected`);
+                    axios.get('/api/connect').then(res => {
+                        console.log("oui")
+                        axios.post('/api/register', data).then((res) => {
+                            console.log('Res : ', res);
+                            router.push(`/user-connected`);
+                        }).catch((err) => {
+                            console.log(err);
+                        });
                     }).catch((err) => {
-                        console.log(err);
-                    });
+                        console.error(err)
+                    })
                 })}>
                     <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
                     <input type="password" {...register('password', { required: true, minLength: 8 })} placeholder='Password' />
