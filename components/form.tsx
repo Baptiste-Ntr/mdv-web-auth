@@ -34,11 +34,6 @@ export const Form = ({ typeForm }: FormProps) => {
         typeForm === "login" ?
             <form onSubmit={handleSubmit(async (data) => {
 
-                let salt = await bcrypt.genSalt(10)
-                let hash = bcrypt.hashSync(data['password'], salt);
-
-                let compare = await bcrypt.compare(data['password'], hash)
-
                 axios.get('/api/connect').then(res => {
                     axios.post('/api/login', data).then((res) => {
                         console.log('Res : ', res);
