@@ -16,6 +16,8 @@ type FormProps = {
     typeForm: string
 }
 
+
+
 export const Form = ({ typeForm }: FormProps) => {
 
     const { register, handleSubmit } = useForm();
@@ -24,22 +26,29 @@ export const Form = ({ typeForm }: FormProps) => {
 
     const pathname = usePathname()
 
+    const makeSalt = async () => {
+        return await bcrypt.genSalt(10)
+    }
+
     return (
         typeForm === "login" ?
-            <form onSubmit={handleSubmit((data) => {
-                console.log(data['password'])
+            <form onSubmit={handleSubmit(async (data) => {
 
+                let salt = await bcrypt.genSalt(10)
+                let hash = bcrypt.hashSync(data['password'], salt);
 
-                // axios.get('/api/connect').then(res => {
-                //     axios.post('/api/login', data).then((res) => {
-                //         console.log('Res : ', res);
-                //         router.push(`/user-connected`);
-                //     }).catch((err) => {
-                //         console.log(err);
-                //     });
-                // }).catch((err: any) => {
-                //     console.error(err)
-                // })
+                let compare = await bcrypt.compare(data['password'], hash)
+
+                axios.get('/api/connect').then(res => {
+                    axios.post('/api/login', data).then((res) => {
+                        console.log('Res : ', res);
+                        router.push(`/user-connected`);
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+                }).catch((err: any) => {
+                    console.error(err)
+                })
             })} className='container-form'>
                 <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
                 <input type="password" {...register('password', { required: true, minLength: 8 })} placeholder='Password' />
@@ -47,8 +56,15 @@ export const Form = ({ typeForm }: FormProps) => {
                 <Link href='/register'> Register </Link>
             </form>
             : typeForm === "register" ?
-                <form onSubmit={handleSubmit((data) => {
+                <form onSubmit={handleSubmit(async (data) => {
                     console.log(data)
+
+
+                    let salt = await bcrypt.genSalt(10)
+                    let hash = bcrypt.hashSync(data['password'], salt);
+
+                    data['password'] = hash
+
                     axios.get('/api/connect').then(res => {
                         console.log("oui")
                         axios.post('/api/register', data).then((res) => {

@@ -2,6 +2,8 @@ import axios from 'axios';
 import { MongoClient } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import bcrypt from 'bcryptjs';
+
 export const POST = async (req: NextApiRequest) => {
 
     const uri = process.env.MONGO_DB_URI || ""
@@ -28,9 +30,14 @@ export const POST = async (req: NextApiRequest) => {
             const users = database.collection(collection)
 
             // const user = await users.findOne({ "email": "test", "password": "test" })
-            const user = await users.findOne({ email, password })
+            // const user = await users.findOne({ email, password })
 
-            if (user) {
+            let salt = await bcrypt.genSalt(10)
+            let hash = bcrypt.hashSync(password, salt);
+
+            let compare = await bcrypt.compare(password, hash)
+
+            if (compare) {
                 return new Response('Find User', {
                     status: 200,
                     headers: {
