@@ -2,7 +2,10 @@ import axios from 'axios';
 import { MongoClient } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import * as jose from 'jose'
+
 import bcrypt from 'bcryptjs';
+import { NextResponse } from 'next/server';
 
 export const POST = async (req: NextApiRequest) => {
 
@@ -17,7 +20,7 @@ export const POST = async (req: NextApiRequest) => {
         //@ts-ignore //disable json() ts error
         const { email, password } = await req.json();
 
-        console.log(email, password)
+        // console.log(email, password)
 
 
         try {
@@ -33,12 +36,25 @@ export const POST = async (req: NextApiRequest) => {
 
                 if (compare) {
                     console.log("User found")
-                    return new Response('Find User', {
-                        status: 200,
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    })
+
+                    const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY)
+
+                    const alg = 'HS256'
+
+                    const token = await new jose.SignJWT({ uid: user._id })
+                        .setProtectedHeader({ alg })
+                        .setIssuedAt()
+                        .setExpirationTime("1h")
+                        .sign(secret)
+
+                    // return new Response('Find User', {
+                    //     status: 200,
+                    //     headers: {
+                    //         'Content-Type': 'application/json',
+                    //     },
+                    // })
+
+                    return NextResponse.json({ token }, { status: 200 })
                 } else {
                     console.error('Wrong password')
                     return new Response('Wrong password', {
