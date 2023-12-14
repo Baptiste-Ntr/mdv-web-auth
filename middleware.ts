@@ -36,11 +36,13 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
-    // if (req.url === "/login" || req.url === "/register") {
-    //     return NextResponse.redirect(new URL('/user-connected', req.url))
-    // } else {
-    //     console.log("non")
-    // }
+    if (req.url === "/login" || req.url === "/register") {
+        if (authPathnames.includes(req.nextUrl.pathname)) {
+            console.log('Redirecting to login')
+            return NextResponse.next()
+        }
+        return NextResponse.redirect(new URL('/user-connected', req.url))
+    }
 
     return NextResponse.next()
 

@@ -13,7 +13,17 @@ export const setCookie = (token: string) => {
     })
 }
 
+export const checkCookie = () => {
+    const cookiesList = cookies()
+    const cookie = cookiesList.get("jwtToken")
+
+    if (!cookie) {
+        redirect("/login")
+    }
+}
+
 export const deleteCookie = () => {
+    console.log('Deleting cookie')
     cookies().delete('jwtToken')
     redirect('/login')
 }
