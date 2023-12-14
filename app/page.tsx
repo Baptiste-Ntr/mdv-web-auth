@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="container" onLoad={checkCookie}>
       <p>Connected</p>
-      <button onClick={() => deleteCookie}>Logout</button>
+      <button onClick={deleteCookie}>Logout</button>
     </div>
   )
 }
