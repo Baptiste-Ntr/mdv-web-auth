@@ -6,6 +6,7 @@ import * as jose from 'jose'
 
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
+import { loginOrRegisterWithGoogleCode } from '@/app/actions';
 
 export const POST = async (req: NextApiRequest) => {
 

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import * as jose from 'jose'
 
-const authPathnames = ['/login', "/register", "/totp"]
+const authPathnames = ['/login', "/register", "/totp", "/google-callback"]
 
 export async function middleware(req: NextRequest) {
 
@@ -34,14 +34,6 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next()
         }
         return NextResponse.redirect(new URL('/login', req.url))
-    }
-
-    if (req.url === "/login" || req.url === "/register") {
-        if (authPathnames.includes(req.nextUrl.pathname)) {
-            console.log('Redirecting to login')
-            return NextResponse.next()
-        }
-        return NextResponse.redirect(new URL('/', req.url))
     }
 
     return NextResponse.next()
