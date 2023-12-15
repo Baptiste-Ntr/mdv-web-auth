@@ -8,8 +8,10 @@ import { Login } from '@/utils/login';
 import { Register } from '@/utils/register';
 import { setCookie } from '@/app/actions';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 
+import { useState } from 'react';
 
 export const Form = ({ typeForm }: any) => {
 
@@ -17,10 +19,18 @@ export const Form = ({ typeForm }: any) => {
 
     const router = useRouter();
 
+    const [isSubmitLogin, setIsSubmitLogin] = useState(false);
+    const [isSubmitRegister, setIsSubmitRegister] = useState(false);
+
+    useEffect(() => {
+
+    }, [isSubmitLogin, isSubmitRegister])
+
     return (
         typeForm === "login" ?
             <form onSubmit={handleSubmit(async (data) => {
                 // console.log(data)
+                setIsSubmitLogin(!isSubmitLogin)
                 Login(data, router)
             })} className='container-form'>
                 <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
@@ -30,6 +40,7 @@ export const Form = ({ typeForm }: any) => {
             </form>
             : typeForm === "register" ?
                 <form onSubmit={handleSubmit(async (data) => {
+                    setIsSubmitRegister(!isSubmitRegister)
                     Register(data, router)
                 })}>
                     <input type="email" {...register('email', { required: true })} placeholder='Email' pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />

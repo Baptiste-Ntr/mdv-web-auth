@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import * as jose from 'jose'
 
-const authPathnames = ['/login', "/register"]
+const authPathnames = ['/login', "/register", "/totp"]
 
 export async function middleware(req: NextRequest) {
 
@@ -41,7 +41,7 @@ export async function middleware(req: NextRequest) {
             console.log('Redirecting to login')
             return NextResponse.next()
         }
-        return NextResponse.redirect(new URL('/user-connected', req.url))
+        return NextResponse.redirect(new URL('/', req.url))
     }
 
     return NextResponse.next()

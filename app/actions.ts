@@ -24,6 +24,6 @@ export const checkCookie = () => {
 
 export const deleteCookie = () => {
     console.log('Deleting cookie')
-    cookies().delete('jwtToken')
-    redirect('/login')
+    // cookies().delete('jwtToken')
+    // redirect('/login')
 }
