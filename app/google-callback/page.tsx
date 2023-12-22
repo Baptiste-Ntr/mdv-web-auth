@@ -6,6 +6,7 @@ import { useEffect } from "react"
 import { loginOrRegisterWithGoogleCode, setCookieMain } from "../actions"
 import { cookies } from 'next/headers'
 import { googleUserType } from "@/types/types"
+import { useRouter } from "next/router"
 
 export default function GoogleCallback() {
 
@@ -13,28 +14,38 @@ export default function GoogleCallback() {
 
     const searchCode: string = searchParam.get('code') || ''
 
-    console.log(searchCode)
+    // console.log(searchCode)
 
     useEffect(() => {
-        
+
+
         const fetchUserGoogle = async () => {
             try {
                 const userGoogle = await loginOrRegisterWithGoogleCode(searchCode)
                 console.log('user google : ', userGoogle)
+                return userGoogle
             } catch (error) {
                 console.error(error)
             }
         }
 
-        fetchUserGoogle()
+        const fetchAndSetUser = async () => {
 
-        // setCookieMain('email', user.email)
-        // setCookieMain('name', user.name)
-        // setCookieMain('picture', user.picture)
-        // setCookieMain('isEmailVerified', user.isEmailVerified ? 'true' : 'false')
-        // setCookieMain('id', user.id)
+            const user: googleUserType = await fetchUserGoogle();
 
-        // redirect('/login')
+            console.log(user);
+
+            setCookieMain('email', user.email);
+            setCookieMain('name', user.name);
+            setCookieMain('givenName', user.given_name);
+            setCookieMain('picture', user.picture);
+            setCookieMain('isEmailVerified', user.isEmailVerified ? 'true' : 'false');
+            setCookieMain('id', user.id);
+
+            // redirect('/')
+        };
+
+        fetchAndSetUser();
 
 
 

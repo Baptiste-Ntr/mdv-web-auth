@@ -10,9 +10,11 @@ export async function middleware(req: NextRequest) {
     const cookiesList = cookies()
     const cookie = cookiesList.get("jwtToken")
 
+    const googleCookie = cookiesList.get('id')
+
     console.log(cookie)
 
-    if (!cookie?.value || !cookie) {
+    if ((!cookie?.value || !cookie) && (!googleCookie?.value || !googleCookie)) {
         console.log('No auth cookie')
         if (authPathnames.includes(req.nextUrl.pathname)) {
             console.log('Redirecting to login')
